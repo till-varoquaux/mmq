@@ -1,0 +1,4 @@
+#!/bin/bash
+trap "rm -vf mmq_test" EXIT
+clang++ --std=c++11 -Wdocumentation -Wall -Wextra -Wpedantic -Wextra-semi -Wno-zero-length-array -Wno-c++11-extensions -Wno-c++98-compat -Wno-c++98-compat-pedantic -o mmq_test test.C \
+&& ./mmq_test
