@@ -31,7 +31,7 @@ int main() {
   mmaped_queue<uint32_t> v(TEST_FILE);
   assert(unlink(TEST_FILE) == 0);
   size_t exp_len = 0;
-  for (size_t i = 1; i < 1000000000; i++) {
+  for (size_t i = 1; i < 100000000; i++) {
     assert(v.size() == exp_len);
     v.push(i);
     exp_len++;

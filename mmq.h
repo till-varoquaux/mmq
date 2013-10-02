@@ -51,6 +51,14 @@ extern "C" {
 #include <error.h>
 }
 #include <cerrno>
+#include <system_error>
+
+// TODO(till): handle weak vtable
+class mmq_error: public std::system_error {
+public:
+  mmq_error(int ev, const char *etxt) :
+    std::system_error(ev, std::system_category(), etxt) {}
+};
 
 /// \cond DOC_INTERNAL
 #ifdef MMQ_NOEXCEPT
@@ -72,15 +80,6 @@ extern "C" {
   } while (false)
 
 #else
-
-#include <system_error>
-
-// TODO(till): handle weak vtable
-class mmq_error: public std::system_error {
-public:
-  mmq_error(int ev, const char *etxt) :
-    std::system_error(ev, std::system_category(), etxt) {}
-};
 
 #define UFAIL(_err, ...)                                \
   (__extension__({                                      \
@@ -123,12 +122,9 @@ class disksafe {
   }
 };
 
-
-namespace {
-  size_t _page_sz() {
-    static const size_t page_sz = static_cast<size_t>(sysconf(_SC_PAGESIZE));
-    return page_sz;
-  }
+inline size_t _page_sz() {
+  static const size_t page_sz = static_cast<size_t>(sysconf(_SC_PAGESIZE));
+  return page_sz;
 }
 
 template <typename _T, uint64_t _MAGIC>
@@ -640,10 +636,10 @@ public:
    * UOK is returned and `pid` is set.
    */
   URETTYPE sync(pid_t *pid = nullptr, ///< [out] If the file is locked the `pid`
-                /// of the locking process.
-           bool ignore_lock = false ///< [in] Flush the file even if another
-                                    /// process already has a read lock on that
-                                    /// file.
+                                      /// of the locking process.
+                bool ignore_lock = false ///< [in] Flush the file even if another
+                                         /// process already has a read lock on that
+                                         /// file.
            ) {
     pid_t my_pid = 0;
     if (!pid)

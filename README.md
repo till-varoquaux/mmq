@@ -7,7 +7,7 @@ The container leverages the operating system caching menachism instead of mainta
 Installing
 ==========
 
-`MMQ` is a header-only library; it doesn't require any compilation. To install it just copy it wherever you want and include the `mmq.h` in your c++ files.
+The project is autotooled. A simple `./configure && make && make install` should do the trick.
 
 Requirement
 ===========
