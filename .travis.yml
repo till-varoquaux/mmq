@@ -1,0 +1,7 @@
+language: c
+compiler:
+  - clang
+env:
+  - BUILDTOOL=autotools
+script:
+  - ./autogen.sh && ./configure && make;
