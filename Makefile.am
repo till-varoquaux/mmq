@@ -17,6 +17,12 @@ check_PROGRAMS = $(TESTS)
 
 PHONY: git-clean update-m4
 
+include aminclude.am
+
+MOSTLYCLEANFILES = $(DX_CLEANFILES)
+
+EXTRA_DIST = cleanup bootstrap $(DX_CONFIG)
+
 git-clean: clean
 	git status --porcelain | sed -ne 's|^?? ||p' | xargs rm -rf
 

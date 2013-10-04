@@ -15,7 +15,10 @@
  * limitations under the License.
  */
 
-/*
+/**
+ * \file
+ * Linearly extensible fifo.
+ *
  * @author Till Varoquaux <till@okcupid.com>
  */
 
@@ -56,9 +59,8 @@ struct _lin_fifo_header {
 };
 /// \endcond DOC_INTERNAL
 
-/**
- * \brief FIFO queues backed by a resizeable random access container.
- *
+// FIFO queues backed by a resizeable random access container.
+/*
  * This implements a container adaptor for FIFO queue backed by a container
  * that has random access but can only grow in one direction. The adaptor does
  * not move elements during resizing (however the underlying container might).
@@ -291,44 +293,32 @@ public:
   typedef std::reverse_iterator<iterator>             reverse_iterator;
   typedef std::reverse_iterator<const_iterator>       const_reverse_iterator;
 
-  /**
-   * Returns an iterator to the beginning.
-   */
+  /// Returns an iterator to the beginning.
   iterator begin() noexcept {
     return iterator(this, _hdr.circ_start);
   }
 
-  /**
-   * Returns an iterator to the beginning.
-   */
+  /// Returns an iterator to the beginning.
   iterator end() noexcept {
     return iterator(this, _end_pos());
   }
 
-  /**
-   * Returns a const iterator to the beginning.
-   */
+  /// Returns a const iterator to the beginning.
   const_iterator begin() const noexcept {
     return const_iterator(this, _hdr.circ_start);
   }
 
-  /**
-   * Returns a const iterator to the end.
-   */
+  /// Returns a const iterator to the end.
   const_iterator end() const noexcept {
     return const_iterator(this, _end_pos());
   }
 
-  /**
-   * Returns a const iterator to the beginning.
-   */
+  /// Returns a const iterator to the beginning.
   const_iterator cbegin() const noexcept {
     return begin();
   }
 
-  /**
-   * Returns a const iterator to the end.
-   */
+  /// Returns a const iterator to the end.
   const_iterator cend() const noexcept {
     return end();
   }
@@ -360,32 +350,25 @@ public:
     return const_reverse_iterator(begin());
   }
 
-  /**
-   * Return the number of elements in the container.
-   */
+  /// Return the number of elements in the container.
   size_type size() const noexcept {
     return _hdr.circ_len + _hdr.ovf_idx - _hdr.circ_bufend;
   }
 
+  /// Test whether the container is empty.
   /**
-   * Test whether the container is empty.
-   *
-   * Returns `true` if the fifo is empty (i.e. size is 0).
+   * \returns `true` if the fifo is empty (i.e. size is 0).
    */
   bool empty() const noexcept {
     return (_hdr.circ_len > 0) || (_hdr.ovf_idx < _hdr.circ_bufend);
   }
 
-  /**
-   * Access specified element.
-   */
+  /// Access specified element.
   reference operator[] (const size_type __i) {
     return _buf[_to_abs_pos(__i)];
   }
 
-  /**
-   * Access specified element.
-   */
+  /// Access specified element.
   const_reference operator[] (const size_type __i) const {
     if (__i >= _hdr.circ_len) {
       return _buf[_hdr.circ_bufend - _hdr.circ_len + __i];
@@ -393,34 +376,26 @@ public:
     return _buf[(_hdr.circ_start + __i) % (_hdr.circ_bufend)];
   }
 
-  /**
-   * Insert element at the end.
-   */
+  /// Insert element at the end.
   void push(const value_type &__v) {
     new(&_buf[_get_push_pos()]) value_type(__v);
     _commit_push_pos();
   }
 
-  /**
-   * Insert element at the end.
-   */
+  /// Insert element at the end.
   void push(value_type &&__v) {
     new(&_buf[_get_push_pos()]) value_type(std::forward<value_type>(__v));
     _commit_push_pos();
   }
 
-  /**
-   * Construct an element at the end.
-   */
+  /// Construct an element at the end.
   template <class... _Args>
   void emplace(_Args&&... __args) {
     new(&_buf[_get_push_pos()]) value_type(std::forward<_Args>(__args)...);
     _commit_push_pos();
   }
 
-  /**
-   * Removes the first element.
-   */
+  /// Removes the first element.
   inline void pop() noexcept {
     assert(_hdr.circ_len != 0);
     _hdr.circ_len--;
@@ -436,9 +411,7 @@ public:
     }
   }
 
-  /**
-   *
-   */
+  /// Remove elements from the beginning of the queue
   void popn(size_type __n) {
     assert(__n <= size());
     if (!std::has_trivial_destructor<value_type>::value) {
@@ -486,16 +459,12 @@ public:
   }
 
 
-  /**
-   * Access the first element.
-   */
+  /// Access the first element.
   reference front() {
     return _circ_tail();
   }
 
-  /**
-   * Access the last element.
-   */
+  /// Access the last element.
   const_reference front() const {
     return _circ_tail();
   }

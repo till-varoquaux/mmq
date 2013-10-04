@@ -21,6 +21,16 @@
  *
  * @author Till Varoquaux <till@okcupid.com>
  */
+
+
+/**
+ * \mainpage
+ *
+ * This manual documents the MMQ API.
+ *
+ * The only class you need to learn about to use this project is
+ * \ref mmaped_queue. All the other classes are only for internal uses.
+ */
 // TODO(till): Write doc on error management.
 // TODO(till): Write doc on iterator invalidation.
 // TODO(till): Add noexcept and noexcept_if tags
@@ -60,7 +70,6 @@ public:
     std::system_error(ev, std::system_category(), etxt) {}
 };
 
-/// \cond DOC_INTERNAL
 #ifdef MMQ_NOEXCEPT
 #define UFAIL(_err, ...)                                        \
   (__extension__({                                              \
@@ -444,7 +453,7 @@ public:
   }
 };
 
-/// \endcond DOC_INTERNAL
+/// Disk backed FIFO queue.
 template<class _T, uint64_t _MAGIC = 2628179991678588509ULL>
 class mmaped_queue : private lin_fifo
 <_T, _mmaped_queue_storage<_T, _MAGIC>, 200 * 1024 * 1024 / sizeof(_T)> {
@@ -458,6 +467,7 @@ private:
   using _parent::_hdr;
 
 public:
+  /// Readonly access to mmq files
   class readonly_view: protected _parent {
   private:
     using _parent::_buf;
@@ -608,7 +618,7 @@ public:
   }
 
 
-  /// Test whether we have any elements.
+  /// Test whether the container is empty.
   /**
    * \return `true` if there are no elements in the queue.
    */
@@ -658,9 +668,8 @@ public:
     return UOK;
   }
 
-  /**
-   * \brief flush the file's content to the disk asynchronously.
-   *
+  /// flush the file's content to the disk asynchronously.
+   /**
    * Tell the os to start flushing the dirty pages asynchronously to the disk.
    */
   void async_flush() {
