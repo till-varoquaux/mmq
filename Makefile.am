@@ -24,7 +24,7 @@ MOSTLYCLEANFILES = $(DX_CLEANFILES)
 EXTRA_DIST = cleanup bootstrap $(DX_CONFIG)
 
 git-clean: clean
-	git status --porcelain | sed -ne 's|^?? ||p' | xargs rm -rf
+	git status --ignored --porcelain | sed -ne 's:^\(??\|!!\) ::p' | xargs rm -rf
 
 update-m4:
 	cd m4; for i in ax_*.m4; do\
