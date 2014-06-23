@@ -8,7 +8,7 @@ The container leverages the operating system caching menachism instead of mainta
 Installing
 ==========
 
-The project is autotooled. A simple `./configure && make && make install` should do the trick.
+The project is autotooled. A simple `./autogen.sh && ./configure && make && make install` should do the trick.
 
 Requirement
 ===========
