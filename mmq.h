@@ -483,9 +483,9 @@ public:
     typedef const_iterator                              iterator;
     typedef const_reverse_iterator                      reverse_iterator;
 
-    static_assert(std::has_trivial_destructor<value_type>::value,
-                "The type argument to mmq should be trivially "
-                " destructible.");
+    static_assert(std::is_trivial<value_type>::value,
+                  "The type argument to mmq should be a trivial "
+                  " type.");
 
     bool closed() const {
       return !_buf.not_mapped();
@@ -645,12 +645,13 @@ public:
    * \returns a unix error number in case of failure. If the file is locked
    * UOK is returned and `pid` is set.
    */
-  URETTYPE sync(pid_t *pid = nullptr, ///< [out] If the file is locked the `pid`
-                                      /// of the locking process.
-                bool ignore_lock = false ///< [in] Flush the file even if another
-                                         /// process already has a read lock on that
-                                         /// file.
-           ) {
+  URETTYPE
+  sync(pid_t *pid = nullptr,    ///< [out] If the file is locked the `pid`
+                                /// of the locking process.
+       bool ignore_lock = false ///< [in] Flush the file even if another
+                                /// process already has a read lock on
+                                /// that file.
+       ) {
     pid_t my_pid = 0;
     if (!pid)
       pid = &my_pid;

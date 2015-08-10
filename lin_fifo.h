@@ -20,6 +20,23 @@
  * Linearly extensible fifo.
  *
  * @author Till Varoquaux <till@okcupid.com>
+ *
+ * Adding to a buffer:
+ * The buffer starts of as a simple circular buffer:
+ *
+ * 3|4|x|1|2
+ *
+ * Add 5:
+ *
+ * 3|4|5|1|2
+ *
+ * When we are adding to a full circular buffer we just overflow at the end of
+ * the buffer
+ * 3|4|5|1|2|6|x|x|
+ *
+ * When enough data has been popped out of the buffer (in this case 1 through 5)
+ * we can resume treating the buffer like a normal circular buffer:
+ * x|x|x|x|6|7|8|x|x
  */
 
 #pragma once
@@ -62,8 +79,8 @@ struct _lin_fifo_header {
 // FIFO queues backed by a resizeable random access container.
 /*
  * This implements a container adaptor for FIFO queue backed by a container
- * that has random access but can only grow in one direction. The adaptor does
- * not move elements during resizing (however the underlying container might).
+ * that has random access but can only grow in one direction. The adaptor never
+ * moves elements during resizing (however the underlying container might).
  *
  */
 template<typename _T,
@@ -95,7 +112,7 @@ protected:
   void _circ_pop() {
     assert(_hdr.circ_len > 0);
 
-    if (std::has_trivial_destructor<value_type>::value)
+    if (!std::is_trivial<value_type>::value)
       _buf[_hdr.circ_start].~value_type();
 
     _hdr.circ_start = (_hdr.circ_start+1) % _hdr.circ_bufend;
@@ -414,7 +431,7 @@ public:
   /// Remove elements from the beginning of the queue
   void popn(size_type __n) {
     assert(__n <= size());
-    if (!std::has_trivial_destructor<value_type>::value) {
+    if (!std::is_trivial<value_type>::value) {
       for (size_type i = 0; i < __n; ++i) {
         pop();
       }
@@ -470,7 +487,7 @@ public:
   }
 
   ~lin_fifo() {
-    if (!std::has_trivial_destructor<value_type>::value) {
+    if (!std::is_trivial<value_type>::value) {
       popn(size());
     }
   }
