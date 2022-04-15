@@ -1,4 +1,7 @@
 [![Build Status](https://travis-ci.org/till-varoquaux/mmq.png?branch=master)](https://travis-ci.org/till-varoquaux/mmq)
+
+> **_NOTE:_**  Ths project is archived. All development has stopped.
+
 Overview
 ========
 
